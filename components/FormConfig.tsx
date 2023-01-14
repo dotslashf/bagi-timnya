@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/state";
-import { getRandomFromArray, randomTeamsName, shuffleArray } from "../util";
+import {
+  distributePlayers,
+  randomTeamsName,
+  shuffleArray,
+} from "../common/util";
+import { toast } from "react-toastify";
 
 const MIN_PLAYERS_PER_TEAM = 2;
 
@@ -14,7 +19,7 @@ const FormConfig = () => {
   const [selectedTeamsFormatName, setSelectedTeamsFormatName] = useState(
     config.teamsFormatName || "placeholder"
   );
-  const [teams, setTeams] = useState<Map<string | number, string[]>>();
+  const [teams, setTeams] = useState<{ [key: string]: string[] }>();
 
   useEffect(() => {
     setConfig({
@@ -34,9 +39,43 @@ const FormConfig = () => {
 
   function handleGenerateTeams() {
     console.log("Generate Teams");
+    const isThereEmptyName = players.some((player) => player === "");
+    if (isThereEmptyName) {
+      return toast.error("Ada baris yang kosong!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
     const maxPlayersPerTeam = Math.floor(players.length / config.numberOfTeams);
+    if (players.length === 0) {
+      return toast.error("Belum ada pemain!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
     if (maxPlayersPerTeam < MIN_PLAYERS_PER_TEAM) {
-      return setIsGenerated(false);
+      return toast.error("Jumlah player per tim tidak cukup!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
     const playerTeamRemainder = players.length % config.numberOfTeams;
     console.log("pemain", maxPlayersPerTeam, playerTeamRemainder);
@@ -52,23 +91,7 @@ const FormConfig = () => {
         ? Array.from({ length: config.numberOfTeams }, (_, i) => i + 1)
         : randomTeamsName(listTeamsName, config.numberOfTeams);
 
-    const teamsAndPlayerHash: Map<string | number, string[]> | undefined =
-      new Map();
-
-    for (let i = 0; i < players.length; i++) {
-      if (!teamsAndPlayerHash.has(teamsName[i % teamsName.length])) {
-        teamsAndPlayerHash.set(teamsName[i % teamsName.length], []);
-      }
-      teamsAndPlayerHash
-        .get(teamsName[i % teamsName.length])!
-        .push(listPlayersName[i]);
-    }
-
-    for (let i = 0; i < playerTeamRemainder; i++) {
-      teamsAndPlayerHash
-        .get(teamsName[i % teamsName.length])!
-        .push(listPlayersName.pop()!);
-    }
+    const teamsAndPlayerHash = distributePlayers(listPlayersName, teamsName);
 
     setTeamsHash(teamsAndPlayerHash);
     setTeams(teamsAndPlayerHash);
@@ -101,11 +124,10 @@ const FormConfig = () => {
             Jumlah Tim
             <input
               type="number"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mt-2"
-              placeholder="3"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mt-2 placeholder-gray-300"
+              placeholder="2"
               min={2}
               max={20}
-              value={numberOfTeams}
               onChange={handleMaxTeam}
             />
           </label>

@@ -14,9 +14,9 @@ interface GlobalState {
   config: [Config, React.Dispatch<React.SetStateAction<Config>>];
   isGenerated: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
   teamsHash: [
-    Map<string | number, string[]> | undefined,
+    { [key: string]: string[] } | undefined,
     React.Dispatch<
-      React.SetStateAction<Map<string | number, string[]> | undefined>
+      React.SetStateAction<{ [key: string]: string[] } | undefined>
     >
   ];
   teamsFormatNameOptions: {
@@ -185,27 +185,13 @@ const AppContext = createContext<GlobalState>({} as GlobalState);
 
 export function AppWrapper({ children }: AppWrapperProps) {
   const [isGenerated, setIsGenerated] = useState(false);
-  const [teamsHash, setTeamsHash] = useState<
-    Map<string | number, string[]> | undefined
-  >();
+  const [teamsHash, setTeamsHash] = useState<{ [key: string]: string[] }>();
   const [config, setConfig] = useState<Config>({
     numberOfTeams: 2,
     teamsFormatName: "placeholder",
   });
-  const [playersName, setPlayersName] = useState([
-    "Icikiwir",
-    "Aselole",
-    "Ujang",
-    "Juan",
-    "Icikiwir 2",
-    "Aselole 2",
-    "Ujang 2",
-    "Juan 2",
-    "Icikiwir 3",
-    "Aselole 3",
-    "Ujang 3",
-    "Juan 3",
-  ]);
+
+  const [playersName, setPlayersName] = useState<Array<any>>([]);
 
   const globalState: GlobalState = {
     playersName: [playersName, setPlayersName],

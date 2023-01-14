@@ -19,7 +19,7 @@ const Drawer = ({
         <>
           <Disclosure.Button className="flex w-full justify-between items-center px-4 py-2 text-left text-sm font-medium border-b border-gray-400 border-opacity-30 shadow-sm">
             <span>{emoji}</span>
-            <span className="text-lg">{title}</span>
+            <span className="text-lg font-bold">{title}</span>
             <svg
               fill="currentColor"
               viewBox="0 0 20 20"
