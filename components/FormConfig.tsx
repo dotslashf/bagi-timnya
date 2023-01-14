@@ -8,7 +8,7 @@ import {
 import { toast } from "react-toastify";
 import { TeamsContext } from "./Layout";
 
-const MIN_PLAYERS_PER_TEAM = 2;
+const MIN_PLAYERS_PER_TEAM = 1;
 
 const FormConfig = () => {
   const state = useAppContext();
@@ -70,7 +70,7 @@ const FormConfig = () => {
       playersName.length / config.numberOfTeams
     );
     if (maxPlayersPerTeam < MIN_PLAYERS_PER_TEAM) {
-      return toast.error("Jumlah player per tim tidak cukup!", {
+      return toast.error("Jumlah pemain per tim tidak cukup!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -137,9 +137,22 @@ const FormConfig = () => {
       </div>
       <button
         type="button"
-        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition group"
         onClick={handleGenerateTeams}
       >
+        <svg
+          fill="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          className="inline-block w-4 h-4 mr-1 group-hover:animate-spin"
+        >
+          <path
+            clip-rule="evenodd"
+            fill-rule="evenodd"
+            d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z"
+          ></path>
+        </svg>{" "}
         bagi
       </button>
     </div>

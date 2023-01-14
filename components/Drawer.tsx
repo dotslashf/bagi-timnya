@@ -17,7 +17,7 @@ const Drawer = ({
     <Disclosure defaultOpen={defaultOpen}>
       {({ open }) => (
         <>
-          <Disclosure.Button className="flex w-full justify-between items-center px-4 py-2 text-left text-sm font-medium border-b border-gray-400 border-opacity-30 shadow-sm">
+          <Disclosure.Button className="flex w-full justify-between items-center px-4 py-2 text-left text-sm font-medium border-b border-gray-400 border-opacity-30 shadow-sm bg-white hover:bg-slate-200 transition">
             <span>{emoji}</span>
             <span className="text-lg font-bold">{title}</span>
             <svg

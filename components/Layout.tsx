@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { useAppContext } from "../context/state";
+import Cards from "./Cards";
 import Drawers from "./Drawers";
 
 interface TeamsContextType {
@@ -16,8 +17,7 @@ export const TeamsContext = createContext<TeamsContextType>({
 export const Layout = () => {
   const state = useAppContext();
   const [isGenerated, _] = state.isGenerated;
-  const [teams, setTeams] = useState({});
-  const { config } = state.configContext;
+  const [teams, setTeams] = useState<{ [key: string]: string[] }>({});
 
   useEffect(() => {}, [isGenerated, state.teamsHash]);
 
@@ -36,48 +36,7 @@ export const Layout = () => {
               Daftar tim akan muncul disini
             </p>
           ) : (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-              {Object.keys(teams!).map((team) => {
-                const players = teams![team];
-
-                return (
-                  <div
-                    className="w-full max-w-xs p-3 bg-white border rounded-lg shadow-md sm:px-6 sm:py-4"
-                    key={team}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <h5 className="text-xl font-bold leading-none text-gray-900 ">
-                        {team}
-                      </h5>
-                    </div>
-                    <div className="flow-root">
-                      <ul role="list" className="divide-y divide-gray-200">
-                        {players.map((player) => {
-                          let padding = "py-2";
-                          if (players.length === 1) {
-                            padding = "pb-2";
-                          }
-                          if (players.length === players.length - 1) {
-                            padding = "pt-2";
-                          }
-                          return (
-                            <li className={padding} key={player}>
-                              <div className="flex items-center space-x-4">
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-xs font-medium text-gray-900">
-                                    {player}
-                                  </p>
-                                </div>
-                              </div>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <Cards teams={teams} />
           )}
         </section>
       </main>
