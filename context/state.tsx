@@ -2,7 +2,13 @@ import { createContext, useContext, useState } from "react";
 
 export interface Config {
   numberOfTeams: number;
-  teamsFormatName: "default" | "fruits" | "flags" | "animals" | "placeholder";
+  teamsFormatName:
+    | "default"
+    | "fruits"
+    | "flags"
+    | "animals"
+    | "placeholder"
+    | string;
 }
 
 interface Hash {
@@ -176,7 +182,7 @@ const TEAMS_FORMAT_NAME_OPTIONS = {
       "🐖 Pig",
       "🐐 Goat",
       "🐏 Ram",
-      "🐑 Ewe",
+      "🐑 Sheep",
       "🐕 Dog",
       "🐩 Poodle",
       "🐈 Cat",
