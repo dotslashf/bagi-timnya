@@ -17,6 +17,7 @@ export const Layout = () => {
   const state = useAppContext();
   const [isGenerated, _] = state.isGenerated;
   const [teams, setTeams] = useState({});
+  const { config } = state.configContext;
 
   useEffect(() => {}, [isGenerated, state.teamsHash]);
 
@@ -46,7 +47,7 @@ export const Layout = () => {
                   >
                     <div className="flex items-center justify-between mb-4">
                       <h5 className="text-xl font-bold leading-none text-gray-900 ">
-                        Tim {team}
+                        {team}
                       </h5>
                     </div>
                     <div className="flow-root">

@@ -1,8 +1,8 @@
 import { createContext, useContext, useState } from "react";
 
-interface Config {
+export interface Config {
   numberOfTeams: number;
-  teamsFormatName: "default" | "fruits" | "flags" | "animals" | string;
+  teamsFormatName: "default" | "fruits" | "flags" | "animals" | "placeholder";
 }
 
 interface Hash {
@@ -10,8 +10,14 @@ interface Hash {
 }
 
 interface GlobalState {
-  playersName: [string[], React.Dispatch<React.SetStateAction<string[]>>];
-  config: [Config, React.Dispatch<React.SetStateAction<Config>>];
+  playerContext: {
+    playersName: string[];
+    setPlayersName: React.Dispatch<React.SetStateAction<string[]>>;
+  };
+  configContext: {
+    config: Config;
+    setConfig: React.Dispatch<React.SetStateAction<Config>>;
+  };
   isGenerated: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
   teamsHash: [
     { [key: string]: string[] } | undefined,
@@ -29,6 +35,11 @@ interface GlobalState {
 
 interface AppWrapperProps {
   children: React.ReactNode;
+}
+
+interface PlayersContext {
+  playersName: string[];
+  setPlayersName: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const TEAMS_FORMAT_NAME_OPTIONS = {
@@ -182,6 +193,12 @@ const TEAMS_FORMAT_NAME_OPTIONS = {
 };
 
 const AppContext = createContext<GlobalState>({} as GlobalState);
+const PlayersContext = createContext<PlayersContext>({
+  playersName: [],
+  setPlayersName: (player) => {
+    return player;
+  },
+} as PlayersContext);
 
 export function AppWrapper({ children }: AppWrapperProps) {
   const [isGenerated, setIsGenerated] = useState(false);
@@ -190,12 +207,17 @@ export function AppWrapper({ children }: AppWrapperProps) {
     numberOfTeams: 2,
     teamsFormatName: "placeholder",
   });
-
-  const [playersName, setPlayersName] = useState<Array<any>>([]);
+  const [playersName, setPlayersName] = useState<Array<string>>([]);
 
   const globalState: GlobalState = {
-    playersName: [playersName, setPlayersName],
-    config: [config, setConfig],
+    playerContext: {
+      playersName: playersName,
+      setPlayersName,
+    },
+    configContext: {
+      config,
+      setConfig,
+    },
     isGenerated: [isGenerated, setIsGenerated],
     teamsHash: [teamsHash, setTeamsHash],
     teamsFormatNameOptions: TEAMS_FORMAT_NAME_OPTIONS,

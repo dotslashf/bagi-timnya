@@ -1,10 +1,16 @@
+import { useContext, useEffect, useState } from "react";
 import { useAppContext } from "../context/state";
 import Drawer from "./Drawer";
 import FormConfig from "./FormConfig";
 
 const Drawers = () => {
   const state = useAppContext();
-  const [players, setPlayersName] = state.playersName;
+  const { playersName, setPlayersName } = state.playerContext;
+  const [players, setPlayers] = useState(playersName);
+
+  useEffect(() => {
+    setPlayersName(players);
+  }, [players, setPlayersName]);
 
   return (
     <div className="w-full md:pt-8 pt-4">
@@ -24,7 +30,8 @@ const Drawers = () => {
             rows={5}
             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-300"
             placeholder={`Icikiwir\nAselole\nUjang\nJuan`}
-            onChange={(e) => setPlayersName(e.target.value.split("\n"))}
+            onChange={(e) => setPlayers(e.target.value.split("\n"))}
+            value={playersName.join("\n")}
           />
           <p className="mt-2 text-gray-900">
             Jumlah pemain saat ini: {players.length}

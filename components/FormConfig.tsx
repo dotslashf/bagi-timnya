@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useAppContext } from "../context/state";
+import { Config, useAppContext } from "../context/state";
 import {
   distributePlayers,
   randomTeamsName,
@@ -12,33 +12,36 @@ const MIN_PLAYERS_PER_TEAM = 2;
 
 const FormConfig = () => {
   const state = useAppContext();
-  const [config, setConfig] = useAppContext().config;
+  const { config, setConfig } = state.configContext;
   const [_, setIsGenerated] = state.isGenerated;
-  const [players] = state.playersName;
-  const [numberOfTeams, setNumberOfTeams] = useState(2);
+  const { playersName } = state.playerContext;
   const [selectedTeamsFormatName, setSelectedTeamsFormatName] = useState(
     config.teamsFormatName || "placeholder"
   );
   const { setTeams } = useContext(TeamsContext);
+  const [localConfig, setLocalConfig] = useState<Config>(config);
 
   useEffect(() => {
-    setConfig({
-      numberOfTeams: numberOfTeams,
-      teamsFormatName: selectedTeamsFormatName,
-    });
-  }, [setConfig, selectedTeamsFormatName, numberOfTeams]);
+    setConfig(localConfig);
+  }, [localConfig, setConfig]);
 
   function handleTeamNameFormat(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedTeamsFormatName(event.target.value);
+    setLocalConfig({
+      ...localConfig,
+      teamsFormatName: event.target.value,
+    });
   }
 
   function handleMaxTeam(event: React.ChangeEvent<HTMLInputElement>) {
-    setNumberOfTeams(Number(event.target.value));
+    setLocalConfig({
+      ...localConfig,
+      numberOfTeams: parseInt(event.target.value),
+    });
   }
 
   function handleGenerateTeams() {
     console.log("Generate Teams");
-    const isThereEmptyName = players.some((player) => player === "");
+    const isThereEmptyName = playersName.some((player) => player === "");
     if (isThereEmptyName) {
       return toast.error("Ada baris yang kosong!", {
         position: "top-right",
@@ -51,8 +54,7 @@ const FormConfig = () => {
         theme: "light",
       });
     }
-    const maxPlayersPerTeam = Math.floor(players.length / config.numberOfTeams);
-    if (players.length === 0) {
+    if (playersName.length === 0) {
       return toast.error("Belum ada pemain!", {
         position: "top-right",
         autoClose: 5000,
@@ -64,6 +66,9 @@ const FormConfig = () => {
         theme: "light",
       });
     }
+    const maxPlayersPerTeam = Math.floor(
+      playersName.length / config.numberOfTeams
+    );
     if (maxPlayersPerTeam < MIN_PLAYERS_PER_TEAM) {
       return toast.error("Jumlah player per tim tidak cukup!", {
         position: "top-right",
@@ -80,12 +85,12 @@ const FormConfig = () => {
     const listTeamsName = [
       ...state.teamsFormatNameOptions[config.teamsFormatName].list,
     ];
-    const listPlayersName = shuffleArray([...players]);
+    const listPlayersName = shuffleArray([...playersName]);
 
     const teamsName =
       config.teamsFormatName === "placeholder" ||
       config.teamsFormatName === "default"
-        ? Array.from({ length: config.numberOfTeams }, (_, i) => i + 1)
+        ? Array.from({ length: config.numberOfTeams }, (_, i) => `Tim ${i + 1}`)
         : randomTeamsName(listTeamsName, config.numberOfTeams);
 
     const teamsAndPlayerHash = distributePlayers(listPlayersName, teamsName);
@@ -96,14 +101,14 @@ const FormConfig = () => {
 
   return (
     <div className="flex flex-col space-y-4">
-      <div className="flex space-x-3 justify-between items-center">
+      <div className="flex flex-col md:flex-row md:space-x-3 space-x-0 space-y-3 md:space-y-0 justify-between items-center">
         <div className="flex flex-col w-full">
           <label className="flex flex-col text-sm font-medium text-gray-900 ">
             Format Nama Tim
             <select
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mt-2"
               onChange={handleTeamNameFormat}
-              value={selectedTeamsFormatName}
+              value={config.teamsFormatName}
             >
               {Object.keys(state.teamsFormatNameOptions).map((key) => {
                 return (
@@ -124,6 +129,7 @@ const FormConfig = () => {
               placeholder="2"
               min={2}
               max={20}
+              value={config.numberOfTeams}
               onChange={handleMaxTeam}
             />
           </label>
