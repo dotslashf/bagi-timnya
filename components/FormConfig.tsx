@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAppContext } from "../context/state";
 import {
   distributePlayers,
@@ -6,28 +6,27 @@ import {
   shuffleArray,
 } from "../common/util";
 import { toast } from "react-toastify";
+import { TeamsContext } from "./Layout";
 
 const MIN_PLAYERS_PER_TEAM = 2;
 
 const FormConfig = () => {
   const state = useAppContext();
   const [config, setConfig] = useAppContext().config;
-  const [__, setTeamsHash] = state.teamsHash;
   const [_, setIsGenerated] = state.isGenerated;
   const [players] = state.playersName;
   const [numberOfTeams, setNumberOfTeams] = useState(2);
   const [selectedTeamsFormatName, setSelectedTeamsFormatName] = useState(
     config.teamsFormatName || "placeholder"
   );
-  const [teams, setTeams] = useState<{ [key: string]: string[] }>();
+  const { setTeams } = useContext(TeamsContext);
 
   useEffect(() => {
     setConfig({
       numberOfTeams: numberOfTeams,
       teamsFormatName: selectedTeamsFormatName,
     });
-    setTeamsHash(teams);
-  }, [setConfig, selectedTeamsFormatName, numberOfTeams, setTeamsHash, teams]);
+  }, [setConfig, selectedTeamsFormatName, numberOfTeams]);
 
   function handleTeamNameFormat(event: React.ChangeEvent<HTMLSelectElement>) {
     setSelectedTeamsFormatName(event.target.value);
@@ -77,8 +76,6 @@ const FormConfig = () => {
         theme: "light",
       });
     }
-    const playerTeamRemainder = players.length % config.numberOfTeams;
-    console.log("pemain", maxPlayersPerTeam, playerTeamRemainder);
 
     const listTeamsName = [
       ...state.teamsFormatNameOptions[config.teamsFormatName].list,
@@ -93,7 +90,6 @@ const FormConfig = () => {
 
     const teamsAndPlayerHash = distributePlayers(listPlayersName, teamsName);
 
-    setTeamsHash(teamsAndPlayerHash);
     setTeams(teamsAndPlayerHash);
     setIsGenerated(true);
   }

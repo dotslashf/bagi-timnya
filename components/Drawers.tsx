@@ -7,7 +7,7 @@ const Drawers = () => {
   const [players, setPlayersName] = state.playersName;
 
   return (
-    <div className="w-full pt-8">
+    <div className="w-full md:pt-8 pt-4">
       <div className="mx-auto w-full space-y-2">
         <Drawer title="Pemain" emoji="👥" defaultOpen={true}>
           <label
@@ -30,7 +30,7 @@ const Drawers = () => {
             Jumlah pemain saat ini: {players.length}
           </p>
         </Drawer>
-        <Drawer title="Konfigurasi" emoji="⚙️">
+        <Drawer title="Konfigurasi" emoji="⚙️" defaultOpen={true}>
           <FormConfig />
         </Drawer>
       </div>
