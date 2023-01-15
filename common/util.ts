@@ -32,3 +32,13 @@ export function distributePlayers(
   }
   return teams;
 }
+
+export function sortTeams(teams: { [key: string]: string[] }) {
+  const sortedTeams = {} as { [key: string]: string[] };
+  Object.entries(teams)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .forEach(([key, value]) => {
+      sortedTeams[key] = value;
+    });
+  return sortedTeams;
+}

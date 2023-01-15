@@ -4,9 +4,11 @@ import {
   distributePlayers,
   randomTeamsName,
   shuffleArray,
+  sortTeams,
 } from "../common/util";
 import { toast } from "react-toastify";
 import { TeamsContext } from "./Layout";
+import queryString from "query-string";
 
 const MIN_PLAYERS_PER_TEAM = 1;
 
@@ -15,11 +17,12 @@ const FormConfig = () => {
   const { config, setConfig } = state.configContext;
   const [_, setIsGenerated] = state.isGenerated;
   const { playersName } = state.playerContext;
-  const [selectedTeamsFormatName, setSelectedTeamsFormatName] = useState(
-    config.teamsFormatName || "placeholder"
-  );
-  const { setTeams } = useContext(TeamsContext);
+  const { teams, setTeams } = useContext(TeamsContext);
   const [localConfig, setLocalConfig] = useState<Config>(config);
+  const origin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "";
 
   useEffect(() => {
     setConfig(localConfig);
@@ -94,9 +97,26 @@ const FormConfig = () => {
         : randomTeamsName(listTeamsName, config.numberOfTeams);
 
     const teamsAndPlayerHash = distributePlayers(listPlayersName, teamsName);
+    const sortedTeams = sortTeams(teamsAndPlayerHash);
 
-    setTeams(teamsAndPlayerHash);
+    setTeams(sortedTeams);
     setIsGenerated(true);
+  }
+
+  async function handleShareTeams() {
+    const queryTeams = queryString.stringify(teams);
+    const url = new URL(`${origin}?${queryTeams}`);
+    await navigator.clipboard.writeText(url.href);
+    toast.info("Link berhasil disalin!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   }
 
   return (
@@ -137,7 +157,7 @@ const FormConfig = () => {
       </div>
       <button
         type="button"
-        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition group"
+        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition"
         onClick={handleGenerateTeams}
       >
         <svg
@@ -145,7 +165,7 @@ const FormConfig = () => {
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
-          className="inline-block w-4 h-4 mr-1 group-hover:animate-spin"
+          className="inline-block w-4 h-4 mr-1"
         >
           <path
             clipRule="evenodd"
@@ -155,6 +175,24 @@ const FormConfig = () => {
         </svg>{" "}
         bagi
       </button>
+      {Object.keys(teams).length > 0 && (
+        <button
+          type="button"
+          className="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition"
+          onClick={handleShareTeams}
+        >
+          <svg
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            className="inline-block w-4 h-4 mr-1"
+          >
+            <path d="M13 4.5a2.5 2.5 0 11.702 1.737L6.97 9.604a2.518 2.518 0 010 .792l6.733 3.367a2.5 2.5 0 11-.671 1.341l-6.733-3.367a2.5 2.5 0 110-3.475l6.733-3.366A2.52 2.52 0 0113 4.5z"></path>
+          </svg>{" "}
+          share hasil teamnya
+        </button>
+      )}
     </div>
   );
 };

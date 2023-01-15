@@ -1,7 +1,9 @@
+import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { useAppContext } from "../context/state";
 import Cards from "./Cards";
 import Drawers from "./Drawers";
+import queryString from "query-string";
 
 interface TeamsContextType {
   teams: { [key: string]: string[] };
@@ -18,8 +20,13 @@ export const Layout = () => {
   const state = useAppContext();
   const [isGenerated, _] = state.isGenerated;
   const [teams, setTeams] = useState<{ [key: string]: string[] }>({});
+  const router = useRouter();
 
-  useEffect(() => {}, [isGenerated, state.teamsHash]);
+  useEffect(() => {
+    if (router.query && Object.keys(router.query).length > 0) {
+      setTeams(router.query as { [key: string]: string[] });
+    }
+  }, [isGenerated, router.query, state.teamsHash]);
 
   return (
     <TeamsContext.Provider value={{ teams, setTeams }}>
