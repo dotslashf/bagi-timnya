@@ -9,6 +9,7 @@ import {
 import { toast } from "react-toastify";
 import { TeamsContext } from "./Layout";
 import queryString from "query-string";
+import { useRouter } from "next/router";
 
 const MIN_PLAYERS_PER_TEAM = 1;
 
@@ -23,6 +24,7 @@ const FormConfig = () => {
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
       : "";
+  const router = useRouter();
 
   useEffect(() => {
     setConfig(localConfig);
@@ -119,6 +121,12 @@ const FormConfig = () => {
     });
   }
 
+  function handleResetTeams() {
+    setTeams({});
+    setIsGenerated(false);
+    router.replace("/", undefined, { shallow: true });
+  }
+
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex flex-col md:flex-row md:space-x-3 space-x-0 space-y-3 md:space-y-0 justify-between items-center">
@@ -191,6 +199,28 @@ const FormConfig = () => {
             <path d="M13 4.5a2.5 2.5 0 11.702 1.737L6.97 9.604a2.518 2.518 0 010 .792l6.733 3.367a2.5 2.5 0 11-.671 1.341l-6.733-3.367a2.5 2.5 0 110-3.475l6.733-3.366A2.52 2.52 0 0113 4.5z"></path>
           </svg>{" "}
           share hasil teamnya
+        </button>
+      )}
+      {router.query && Object.keys(router.query).length > 0 && (
+        <button
+          type="button"
+          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition"
+          onClick={handleResetTeams}
+        >
+          <svg
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            className="inline-block w-4 h-4 mr-1"
+          >
+            <path
+              clip-rule="evenodd"
+              fill-rule="evenodd"
+              d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+            ></path>
+          </svg>{" "}
+          reset team
         </button>
       )}
     </div>
