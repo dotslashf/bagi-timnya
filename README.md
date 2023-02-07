@@ -26,8 +26,6 @@ https://bagi-timnya.vercel.app/
 
 ### Contribute
 
-[![Donate Saweria](https://img.shields.io/badge/donate%20on-saweria-yellow?style=flat-square&logo=coffee)](https://saweria.co/dotslashf)
-<a href="https://www.nihbuatjajan.com/dotslashf" target="_blank"><img src="https://d4xyvrfd64gfm.cloudfront.net/buttons/default-cta.png" alt="Nih buat jajan" style="height: 28px !important;" ></a>
 Open PR with idea or bug, i'll reply it asap 🚀
 
 ### Support
