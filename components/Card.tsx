@@ -24,10 +24,10 @@ const Card = ({ players, teamName }: Card) => {
           ) : (
             players.map((player, i) => {
               let padding = "py-2";
-              if (i === 0) {
+              if (i === 0 && players.length > 1) {
                 padding = "pb-2";
               }
-              if (i === players.length - 1) {
+              if (i === players.length - 1 && players.length > 1) {
                 padding = "pt-2";
               }
               return (

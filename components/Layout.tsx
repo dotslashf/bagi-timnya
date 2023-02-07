@@ -24,7 +24,10 @@ export const Layout = () => {
 
   useEffect(() => {
     if (router.query && Object.keys(router.query).length > 0) {
-      setTeams(router.query as { [key: string]: string[] });
+      const teamsHash = queryString.parse(
+        queryString.stringify(router.query)
+      ) as { [key: string]: string[] };
+      setTeams(teamsHash);
     }
   }, [isGenerated, router.query, state.teamsHash]);
 
