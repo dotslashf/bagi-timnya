@@ -7,8 +7,9 @@ const Card = ({ players, teamName }: Card) => {
   return (
     <div className="flex flex-col group">
       <div className="flex items-center justify-between rounded-t-lg border p-3 sm:px-6 sm:py-4 shadow-sm z-10 bg-slate-100 group-hover:bg-slate-200 transition-colors">
-        <h5 className="text-xl font-bold leading-none text-gray-900 cursor-default">
-          {teamName}
+        <h5 className="text-xl font-bold leading-none text-gray-900 cursor-default flex">
+          {teamName}{" "}
+          <p className="ml-2 text-xs px-1.5 py-0.5 bg-slate-400 rounded-md text-white">{`${players.length}`}</p>
         </h5>
       </div>
       <div className="w-full max-w-xs bg-white border border-t-0 rounded-b-lg shadow-md p-3 sm:px-6 sm:py-4">
