@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 export function getRandomFromArray(arr: string[]) {
   const randomIndex = Math.floor(Math.random() * arr.length);
   const selected = arr[randomIndex];
@@ -16,29 +18,49 @@ export function shuffleArray(arr: string[]) {
 
 export function distributePlayers(
   players: string[],
-  teamNames: string[] | number[]
+  // teamNames: string[] | number[]
+  maxTeams: number
 ) {
   players.sort(() => Math.random() - 0.5);
   let teams = {} as { [key: string]: string[] };
-  let teamSize = Math.floor(players.length / teamNames.length);
-  let remainder = players.length % teamNames.length;
-  for (let i = 0; i < teamNames.length; i++) {
+  let teamSize = Math.floor(players.length / maxTeams);
+  let remainder = players.length % maxTeams;
+  for (let i = 0; i < maxTeams; i++) {
     let team = players.slice(i * teamSize, (i + 1) * teamSize);
     if (remainder > 0) {
-      team.push(players[teamNames.length * teamSize + remainder - 1]);
+      team.push(players[maxTeams * teamSize + remainder - 1]);
       remainder--;
     }
-    teams[teamNames[i]] = team;
+    teams[crypto.randomBytes(20).toString("hex")] = team;
   }
   return teams;
 }
 
-export function sortTeams(teams: { [key: string]: string[] }) {
+export function sortTeams(
+  teams: { [key: string]: string[] },
+  teamsFormat: string
+) {
   const sortedTeams = {} as { [key: string]: string[] };
   Object.entries(teams)
-    .sort((a, b) => a[0].localeCompare(b[0]))
+    .sort((a, b) => {
+      if (teamsFormat === "placeholder" || teamsFormat === "default") {
+        return parseInt(a[0]) - parseInt(b[0]);
+      }
+      return a[0].localeCompare(b[0]);
+    })
     .forEach(([key, value]) => {
       sortedTeams[key] = value;
     });
   return sortedTeams;
+}
+
+export function changeTeamsName(
+  teams: { [key: string]: string[] },
+  teamNames: string[]
+) {
+  const changedTeams = {} as { [key: string]: string[] };
+  Object.entries(teams).forEach(([key, value], index) => {
+    changedTeams[teamNames[index]] = value;
+  });
+  return changedTeams;
 }

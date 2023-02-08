@@ -95,13 +95,17 @@ const FormConfig = () => {
     const teamsName =
       config.teamsFormatName === "placeholder" ||
       config.teamsFormatName === "default"
-        ? Array.from({ length: config.numberOfTeams }, (_, i) => `Tim ${i + 1}`)
+        ? Array.from({ length: config.numberOfTeams }, (_, i) => `${i + 1}`)
         : randomTeamsName(listTeamsName, config.numberOfTeams);
 
-    const teamsAndPlayerHash = distributePlayers(listPlayersName, teamsName);
-    const sortedTeams = sortTeams(teamsAndPlayerHash);
+    const teamsAndPlayerHash = distributePlayers(
+      listPlayersName,
+      config.numberOfTeams
+    );
+    const sortedTeams = sortTeams(teamsAndPlayerHash, config.teamsFormatName);
 
     setTeams(sortedTeams);
+    console.log(sortedTeams);
     setIsGenerated(true);
   }
 

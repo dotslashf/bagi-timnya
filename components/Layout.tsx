@@ -41,12 +41,12 @@ export const Layout = () => {
           <Drawers />
         </aside>
         <section className="bg-white col-span-3 md:col-span-2 p-4">
-          {!isGenerated && !teams ? (
+          {!isGenerated ? (
             <p className="md:text-left text-center">
               Daftar tim akan muncul disini
             </p>
           ) : (
-            <Cards teams={teams} />
+            <Cards />
           )}
         </section>
       </main>
