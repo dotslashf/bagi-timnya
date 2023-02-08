@@ -1,10 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { Config, useAppContext } from "../context/state";
-import { distributePlayers, shuffleArray } from "../common/util";
+import {
+  distributePlayers,
+  randomTeamsName,
+  shuffleArray,
+} from "../common/util";
 import { toast } from "react-toastify";
-import { TeamsContext } from "./Layout";
 import queryString from "query-string";
 import { useRouter } from "next/router";
+import { TeamsContext } from "../context/teamContext";
 
 const MIN_PLAYERS_PER_TEAM = 1;
 
@@ -15,6 +19,7 @@ const FormConfig = () => {
   const { playersName } = state.playerContext;
   const { teams, setTeams } = useContext(TeamsContext);
   const [localConfig, setLocalConfig] = useState<Config>(config);
+  const teamsFormat = useAppContext().teamsFormatNameOptions;
   const origin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
@@ -83,9 +88,14 @@ const FormConfig = () => {
     }
 
     const listPlayersName = shuffleArray([...playersName]);
+    const listTeamsName = randomTeamsName(
+      teamsFormat[localConfig.teamsFormatName].list,
+      teamsFormat[localConfig.teamsFormatName].list.length
+    );
 
     const teamsAndPlayerHash = distributePlayers(
       listPlayersName,
+      listTeamsName,
       config.numberOfTeams
     );
     setTeams(teamsAndPlayerHash);
@@ -109,7 +119,7 @@ const FormConfig = () => {
   }
 
   function handleResetTeams() {
-    setTeams({});
+    setTeams([]);
     setIsGenerated(false);
     router.replace("/", undefined, { shallow: true });
   }

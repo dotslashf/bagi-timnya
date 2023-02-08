@@ -11,10 +11,6 @@ export interface Config {
     | string;
 }
 
-interface Hash {
-  [key: string]: string[];
-}
-
 interface GlobalState {
   playerContext: {
     playersName: string[];

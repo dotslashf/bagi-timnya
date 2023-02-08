@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { changeTeamsName, randomTeamsName } from "../common/util";
 import { useAppContext } from "../context/state";
+import { TeamsContext, TeamsObject } from "../context/teamContext";
 import Card from "./Card";
-import { TeamsContext } from "./Layout";
 
 interface Cards {
-  teams: { [key: string]: string[] };
+  teams: TeamsObject[];
 }
 
 const Cards = () => {
@@ -13,31 +13,26 @@ const Cards = () => {
   const { teamsFormatName } = useAppContext().configContext.config;
   const teamsFormat = useAppContext().teamsFormatNameOptions;
 
-  const [formattedTeams, setFormattedTeams] = useState<{
-    [key: string]: string[];
-  }>({});
+  const [formattedTeams, setFormattedTeams] = useState<TeamsObject[]>([]);
 
   useEffect(() => {
     const listTeamsName = randomTeamsName(
       teamsFormat[teamsFormatName].list,
       teamsFormat[teamsFormatName].list.length
     );
-    const formattedTeamsName = changeTeamsName(teams, listTeamsName);
+    const formattedTeamsName = changeTeamsName(
+      teams,
+      listTeamsName,
+      teamsFormatName
+    );
     setFormattedTeams(formattedTeamsName);
-    console.log("teams", teams);
   }, [teams, teamsFormatName, teamsFormat]);
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-      {Object.keys(formattedTeams).map((team) => {
-        const players = formattedTeams[team];
+      {formattedTeams.map((team) => {
         return (
-          <Card
-            players={players}
-            teamName={team}
-            key={team}
-            teamsFormatName={teamsFormatName}
-          />
+          <Card players={team.players} teamName={team.name} key={team.name} />
         );
       })}
     </div>

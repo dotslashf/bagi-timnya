@@ -1,20 +1,10 @@
 import { useRouter } from "next/router";
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "../context/state";
 import Cards from "./Cards";
 import Drawers from "./Drawers";
 import queryString from "query-string";
-
-interface TeamsContextType {
-  teams: { [key: string]: string[] };
-  setTeams: React.Dispatch<React.SetStateAction<{ [key: string]: string[] }>>;
-}
-export const TeamsContext = createContext<TeamsContextType>({
-  teams: {},
-  setTeams: (teams) => {
-    return teams;
-  },
-});
+import { TeamsContext } from "../context/teamContext";
 
 export const Layout = () => {
   const state = useAppContext();
