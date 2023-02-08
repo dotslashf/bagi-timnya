@@ -119,7 +119,7 @@ const TEAMS_FORMAT_NAME_OPTIONS = {
     title: "Hewan",
     list: [
       "🐶 Dog",
-      "🐱 Cat",
+      "🐱 Face Cat",
       "🐭 Mouse",
       "🐹 Hamster",
       "🐰 Rabbit",

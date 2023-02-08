@@ -1,14 +1,17 @@
 interface Card {
   players: string[] | string;
   teamName: string;
+  teamsFormatName: string;
 }
 
-const Card = ({ players, teamName }: Card) => {
+const Card = ({ players, teamName, teamsFormatName }: Card) => {
   return (
     <div className="flex flex-col group">
       <div className="flex items-center justify-between rounded-t-lg border p-3 sm:px-6 sm:py-4 shadow-sm z-10 bg-slate-100 group-hover:bg-slate-200 transition-colors">
         <h5 className="text-xl font-bold leading-none text-gray-900 cursor-default flex">
-          {teamName}{" "}
+          {teamsFormatName === "placeholder" || teamsFormatName === "default"
+            ? `Tim ${parseInt(teamName) + 1}`
+            : `${teamName} `}
           <p className="ml-2 text-xs px-1.5 py-0.5 bg-slate-400 rounded-md text-white">{`${players.length}`}</p>
         </h5>
       </div>

@@ -1,11 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Config, useAppContext } from "../context/state";
-import {
-  distributePlayers,
-  randomTeamsName,
-  shuffleArray,
-  sortTeams,
-} from "../common/util";
+import { distributePlayers, shuffleArray } from "../common/util";
 import { toast } from "react-toastify";
 import { TeamsContext } from "./Layout";
 import queryString from "query-string";
@@ -87,25 +82,13 @@ const FormConfig = () => {
       });
     }
 
-    const listTeamsName = [
-      ...state.teamsFormatNameOptions[config.teamsFormatName].list,
-    ];
     const listPlayersName = shuffleArray([...playersName]);
-
-    const teamsName =
-      config.teamsFormatName === "placeholder" ||
-      config.teamsFormatName === "default"
-        ? Array.from({ length: config.numberOfTeams }, (_, i) => `${i + 1}`)
-        : randomTeamsName(listTeamsName, config.numberOfTeams);
 
     const teamsAndPlayerHash = distributePlayers(
       listPlayersName,
       config.numberOfTeams
     );
-    const sortedTeams = sortTeams(teamsAndPlayerHash, config.teamsFormatName);
-
-    setTeams(sortedTeams);
-    console.log(sortedTeams);
+    setTeams(teamsAndPlayerHash);
     setIsGenerated(true);
   }
 
