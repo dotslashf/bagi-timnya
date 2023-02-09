@@ -1,10 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Config, useAppContext } from "../context/state";
-import {
-  distributePlayers,
-  randomTeamsName,
-  shuffleArray,
-} from "../common/util";
+import { distributePlayers, shufflePlayers } from "../common/util";
 import { toast } from "react-toastify";
 import queryString from "query-string";
 import { useRouter } from "next/router";
@@ -19,7 +15,6 @@ const FormConfig = () => {
   const { playersName } = state.playerContext;
   const { teams, setTeams } = useContext(TeamsContext);
   const [localConfig, setLocalConfig] = useState<Config>(config);
-  const teamsFormat = useAppContext().teamsFormatNameOptions;
   const origin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
@@ -87,15 +82,10 @@ const FormConfig = () => {
       });
     }
 
-    const listPlayersName = shuffleArray([...playersName]);
-    const listTeamsName = randomTeamsName(
-      teamsFormat[localConfig.teamsFormatName].list,
-      teamsFormat[localConfig.teamsFormatName].list.length
-    );
+    const listPlayersName = shufflePlayers([...playersName]);
 
     const teamsAndPlayerHash = distributePlayers(
       listPlayersName,
-      listTeamsName,
       config.numberOfTeams
     );
     setTeams(teamsAndPlayerHash);
@@ -103,8 +93,14 @@ const FormConfig = () => {
   }
 
   async function handleShareTeams() {
-    const queryTeams = queryString.stringify(teams);
-    const url = new URL(`${origin}?${queryTeams}`);
+    const stringTeams = `${teams
+      .map((team) => JSON.stringify(team))
+      .join("&teams=")}`;
+    const stringFormatName = JSON.stringify(config.teamsFormatName);
+    const url = new URL(
+      `${origin}?teams=${stringTeams}&formatName=${stringFormatName}`
+    );
+    console.log(url);
     await navigator.clipboard.writeText(url.href);
     toast.info("Link berhasil disalin!", {
       position: "top-right",

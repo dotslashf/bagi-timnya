@@ -3,23 +3,59 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "../context/state";
 import Cards from "./Cards";
 import Drawers from "./Drawers";
-import queryString from "query-string";
-import { TeamsContext } from "../context/teamContext";
+import { TeamsContext, TeamsObject } from "../context/teamContext";
 
 export const Layout = () => {
   const state = useAppContext();
-  const [isGenerated, _] = state.isGenerated;
-  const [teams, setTeams] = useState<{ [key: string]: string[] }>({});
+  const { setConfig } = state.configContext;
+  const [isGenerated, setIsGenerated] = state.isGenerated;
+  const [teams, setTeams] = useState<TeamsObject[]>([]);
   const router = useRouter();
+  const teamsFormat = useAppContext().teamsFormatNameOptions;
+  const { setTeamsFormatName } = useAppContext().teamsFormatNameTemporary;
 
   useEffect(() => {
     if (router.query && Object.keys(router.query).length > 0) {
-      const teamsHash = queryString.parse(
-        queryString.stringify(router.query)
-      ) as { [key: string]: string[] };
-      setTeams(teamsHash);
+      const { teams, formatName } = router.query as {
+        teams: string[];
+        formatName: string;
+      };
+
+      const teamsNameFromQuery = teams.map((team) => {
+        return {
+          name: JSON.parse(team).name,
+          emoji: JSON.parse(team).emoji,
+        };
+      });
+      setTeamsFormatName({
+        title: "temporary",
+        list: teamsNameFromQuery,
+      });
+
+      const formattedTeams = teams!.map((team) => {
+        return {
+          name: JSON.parse(team).name,
+          players: JSON.parse(team).players,
+          uuid: JSON.parse(team).uuid,
+          emoji: JSON.parse(team).emoji,
+        };
+      }) as TeamsObject[];
+      setConfig({
+        teamsFormatName: JSON.parse(formatName),
+        numberOfTeams: formattedTeams.length,
+        isFromShareLink: true,
+      });
+      setTeams(formattedTeams);
+      setIsGenerated(true);
     }
-  }, [isGenerated, router.query, state.teamsHash]);
+  }, [
+    isGenerated,
+    router.query,
+    setConfig,
+    setIsGenerated,
+    setTeamsFormatName,
+    teamsFormat,
+  ]);
 
   return (
     <TeamsContext.Provider value={{ teams, setTeams }}>

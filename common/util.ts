@@ -8,18 +8,31 @@ export function getRandomFromArray(arr: string[]) {
   return selected;
 }
 
-export function randomTeamsName(arr: string[], max: number) {
-  const teams = shuffleArray(arr);
-  return teams.slice(0, max);
+export function randomTeamsName(
+  list: {
+    emoji?: string;
+    name: string;
+  }[],
+  max: number
+) {
+  return shuffleArray(list).slice(0, max);
 }
 
-export function shuffleArray(arr: string[]) {
-  return arr.sort(() => Math.random() - 0.5);
+export function shuffleArray(
+  list: {
+    emoji?: string;
+    name: string;
+  }[]
+) {
+  return list.sort(() => Math.random() - 0.5);
+}
+
+export function shufflePlayers(players: string[]) {
+  return players.sort(() => Math.random() - 0.5);
 }
 
 export function distributePlayers(
   players: string[],
-  listTeamsNames: string[],
   maxTeams: number
 ): TeamsObject[] {
   players.sort(() => Math.random() - 0.5);
@@ -55,16 +68,48 @@ export function distributePlayers(
 
 export function changeTeamsName(
   teams: TeamsObject[],
-  teamNames: string[],
-  teamsFormatName: string
+  teamNames: {
+    emoji?: string;
+    name: string;
+  }[],
+  teamsFormatName: string,
+  isFromShareLink?: boolean
 ) {
+  if (isFromShareLink) {
+    return teams.map((team) => {
+      team.name = teams.find((t) => t.uuid === team.uuid)!.name;
+      team.emoji = teams.find((t) => t.uuid === team.uuid)?.emoji;
+      return team;
+    });
+  }
   return teamsFormatName === "placeholder" || teamsFormatName === "default"
     ? teams.map((team, i) => {
         team.name = `Team ${i + 1}`;
         return team;
       })
     : teams.map((team, i) => {
-        team.name = teamNames[i];
+        team.name = teamNames[i].name;
+        team.emoji = teamNames[i].emoji;
         return team;
       });
+}
+
+export function generateTeamsToShare(teams: TeamsObject[]) {
+  return new Map<
+    string,
+    {
+      name: string;
+      emoji?: string;
+      players: string[];
+    }
+  >(
+    teams.map((team) => [
+      team.uuid,
+      {
+        name: team.name,
+        emoji: team.emoji,
+        players: team.players,
+      },
+    ])
+  );
 }
