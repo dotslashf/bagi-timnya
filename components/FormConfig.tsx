@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { Config, useAppContext } from "../context/state";
 import { distributePlayers, shufflePlayers } from "../common/util";
 import { toast } from "react-toastify";
-import queryString from "query-string";
 import { useRouter } from "next/router";
 import { TeamsContext } from "../context/teamContext";
 
@@ -100,7 +99,6 @@ const FormConfig = () => {
     const url = new URL(
       `${origin}?teams=${stringTeams}&formatName=${stringFormatName}`
     );
-    console.log(url);
     await navigator.clipboard.writeText(url.href);
     toast.info("Link berhasil disalin!", {
       position: "top-right",
@@ -117,6 +115,12 @@ const FormConfig = () => {
   function handleResetTeams() {
     setTeams([]);
     setIsGenerated(false);
+    setConfig({
+      numberOfTeams: 2,
+      teamsFormatName: "placeholder",
+      isFromShareLink: false,
+      isReset: true,
+    });
     router.replace("/", undefined, { shallow: true });
   }
 

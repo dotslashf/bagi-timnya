@@ -7,7 +7,7 @@ import { TeamsContext, TeamsObject } from "../context/teamContext";
 
 export const Layout = () => {
   const state = useAppContext();
-  const { setConfig } = state.configContext;
+  const { config, setConfig } = state.configContext;
   const [isGenerated, setIsGenerated] = state.isGenerated;
   const [teams, setTeams] = useState<TeamsObject[]>([]);
   const router = useRouter();
@@ -15,6 +15,17 @@ export const Layout = () => {
   const { setTeamsFormatName } = useAppContext().teamsFormatNameTemporary;
 
   useEffect(() => {
+    if (config.isReset) {
+      setConfig({
+        isReset: false,
+        teamsFormatName: "default",
+        numberOfTeams: 2,
+        isFromShareLink: false,
+      });
+      setTeams([]);
+      setIsGenerated(false);
+      router.push("/");
+    }
     if (router.query && Object.keys(router.query).length > 0) {
       const { teams, formatName } = router.query as {
         teams: string[];
@@ -41,6 +52,7 @@ export const Layout = () => {
         };
       }) as TeamsObject[];
       setConfig({
+        isReset: config.isReset,
         teamsFormatName: JSON.parse(formatName),
         numberOfTeams: formattedTeams.length,
         isFromShareLink: true,
@@ -49,7 +61,10 @@ export const Layout = () => {
       setIsGenerated(true);
     }
   }, [
+    config.isFromShareLink,
+    config.isReset,
     isGenerated,
+    router,
     router.query,
     setConfig,
     setIsGenerated,
@@ -67,12 +82,12 @@ export const Layout = () => {
           <Drawers />
         </aside>
         <section className="bg-white col-span-3 md:col-span-2 p-4">
-          {!isGenerated ? (
+          {!isGenerated || config.isReset ? (
             <p className="md:text-left text-center">
               Daftar tim akan muncul disini
             </p>
           ) : (
-            <Cards />
+            <Cards teams={teams} />
           )}
         </section>
       </main>

@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 export interface Config {
   numberOfTeams: number;
   isFromShareLink?: boolean;
+  isReset?: boolean;
   teamsFormatName:
     | "default"
     | "fruits"
