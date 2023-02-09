@@ -2,6 +2,8 @@ import { createContext, useContext, useState } from "react";
 
 export interface Config {
   numberOfTeams: number;
+  isFromShareLink?: boolean;
+  isReset?: boolean;
   teamsFormatName:
     | "default"
     | "fruits"
@@ -9,10 +11,6 @@ export interface Config {
     | "animals"
     | "placeholder"
     | string;
-}
-
-interface Hash {
-  [key: string]: string[];
 }
 
 interface GlobalState {
@@ -34,8 +32,29 @@ interface GlobalState {
   teamsFormatNameOptions: {
     [key: string]: {
       title: string;
-      list: string[];
+      list: {
+        emoji?: string;
+        name: string;
+      }[];
     };
+  };
+  teamsFormatNameTemporary: {
+    teamsFormatName: {
+      title: string;
+      list: {
+        emoji?: string;
+        name: string;
+      }[];
+    };
+    setTeamsFormatName: React.Dispatch<
+      React.SetStateAction<{
+        title: string;
+        list: {
+          emoji?: string;
+          name: string;
+        }[];
+      }>
+    >;
   };
 }
 
@@ -53,147 +72,231 @@ const TEAMS_FORMAT_NAME_OPTIONS = {
     title: "Pilih format",
     list: Array(20)
       .fill("")
-      .map((_, i) => `${i}`),
+      .map((_, i) => {
+        return {
+          name: `${i}`,
+        };
+      }),
   },
   default: {
     title: "Default",
     list: Array(20)
       .fill("")
-      .map((_, i) => `${i}`),
+      .map((_, i) => {
+        return {
+          name: `${i}`,
+        };
+      }),
   },
   fruitsAndFoods: {
     title: "Buah/Makan",
     list: [
-      "🍎 Apple",
-      "🍌 Banana",
-      "🍇 Grapes",
-      "🍉 Watermelon",
-      "🍍 Pineapple",
-      "🍓 Strawberry",
-      "🍒 Cherry",
-      "🍑 Peach",
-      "🍐 Pear",
-      "🍋 Lemon",
-      "🍊 Orange",
-      "🍈 Melon",
-      "🍏 Green Apple",
-      "🍆 Eggplant",
-      "🍅 Tomato",
-      "🥑 Avocado",
-      "🥝 Kiwi",
-      "🥥 Coconut",
-      "🥦 Broccoli",
-      "🥬 Cabbage",
+      {
+        emoji: "🍎",
+        name: "Apple",
+      },
+      {
+        emoji: "🍌",
+        name: "Banana",
+      },
+      {
+        emoji: "🍇",
+        name: "Grapes",
+      },
+      {
+        emoji: "🍉",
+        name: "Watermelon",
+      },
+      {
+        emoji: "🍍",
+        name: "Pineapple",
+      },
+      {
+        emoji: "🍓",
+        name: "Strawberry",
+      },
+      {
+        emoji: "🍒",
+        name: "Cherry",
+      },
+      {
+        emoji: "🍑",
+        name: "Peach",
+      },
+      {
+        emoji: "🍐",
+        name: "Pear",
+      },
+      {
+        emoji: "🍋",
+        name: "Lemon",
+      },
+      {
+        emoji: "🍊",
+        name: "Orange",
+      },
+      {
+        emoji: "🍈",
+        name: "Melon",
+      },
+      {
+        emoji: "🍏",
+        name: "Green Apple",
+      },
+      {
+        emoji: "🍆",
+        name: "Eggplant",
+      },
+      {
+        emoji: "🍅",
+        name: "Tomato",
+      },
+      {
+        emoji: "🥑",
+        name: "Avocado",
+      },
+      {
+        emoji: "🥝",
+        name: "Kiwi",
+      },
+      {
+        emoji: "🥥",
+        name: "Coconut",
+      },
+      {
+        emoji: "🥦",
+        name: "Broccoli",
+      },
+      {
+        emoji: "🥬",
+        name: "Cabbage",
+      },
     ],
   },
   flags: {
     title: "Bendera",
     list: [
-      "🇯🇵 Japan",
-      "🇮🇩 Indonesia",
-      "🇺🇸 USA",
-      "🇰🇷 Korea",
-      "🇨🇳 China",
-      "🇮🇳 India",
-      "🇷🇺 Russia",
-      "🇧🇷 Brazil",
-      "🇬🇧 UK",
-      "🇫🇷 France",
-      "🇪🇸 Spain",
-      "🇩🇪 Germany",
-      "🇮🇹 Italy",
-      "🇨🇦 Canada",
-      "🇦🇺 Australia",
-      "🇳🇿 New Zealand",
-      "🇳🇱 Netherlands",
-      "🇵🇱 Poland",
-      "🇹🇷 Turkey",
-      "🇵🇭 Philippines",
-      "🇲🇽 Mexico",
-      "🇵🇰 Pakistan",
-      "🇮🇷 Iran",
-      "🇹🇭 Thailand",
+      {
+        emoji: "🇯🇵",
+        name: "Japan",
+      },
+      {
+        emoji: "🇮🇩",
+        name: "Indonesia",
+      },
+      {
+        emoji: "🇺🇸",
+        name: "USA",
+      },
+      {
+        emoji: "🇰🇷",
+        name: "Korea",
+      },
+      {
+        emoji: "🇨🇳",
+        name: "China",
+      },
+      {
+        emoji: "🇮🇳",
+        name: "India",
+      },
+      {
+        emoji: "🇷🇺",
+        name: "Russia",
+      },
+      {
+        emoji: "🇧🇷",
+        name: "Brazil",
+      },
+      {
+        emoji: "🇬🇧",
+        name: "UK",
+      },
+      {
+        emoji: "🇫🇷",
+        name: "France",
+      },
+      {
+        emoji: "🇪🇸",
+        name: "Spain",
+      },
+      {
+        emoji: "🇩🇪",
+        name: "Germany",
+      },
+      {
+        emoji: "🇮🇹",
+        name: "Italy",
+      },
+      {
+        emoji: "🇨🇦",
+        name: "Canada",
+      },
+      {
+        emoji: "🇦🇺",
+        name: "Australia",
+      },
+      {
+        emoji: "🇳🇿",
+        name: "New Zealand",
+      },
+      {
+        emoji: "🇳🇱",
+        name: "Netherlands",
+      },
+      {
+        emoji: "🇵🇱",
+        name: "Poland",
+      },
+      {
+        emoji: "🇹🇷",
+        name: "Turkey",
+      },
+      {
+        emoji: "🇵🇭",
+        name: "Philippines",
+      },
+      {
+        emoji: "🇲🇽",
+        name: "Mexico",
+      },
+      {
+        emoji: "🇵🇰",
+        name: "Pakistan",
+      },
+      {
+        emoji: "🇮🇷",
+        name: "Iran",
+      },
+      {
+        emoji: "🇹🇭",
+        name: "Thailand",
+      },
     ],
   },
   animals: {
     title: "Hewan",
     list: [
-      "🐶 Dog",
-      "🐱 Cat",
-      "🐭 Mouse",
-      "🐹 Hamster",
-      "🐰 Rabbit",
-      "🦊 Fox",
-      "🐻 Bear",
-      "🐼 Panda",
-      "🐨 Koala",
-      "🐯 Tiger",
-      "🦁 Lion",
-      "🐮 Cow",
-      "🐷 Pig",
-      "🐸 Frog",
-      "🐵 Monkey",
-      "🐔 Chicken",
-      "🐧 Penguin",
-      "🐦 Bird",
-      "🐤 Baby Chick",
-      "🐣 Hatching Chick",
-      "🐥 Front-Facing Baby Chick",
-      "🦆 Duck",
-      "🦅 Eagle",
-      "🦉 Owl",
-      "🦇 Bat",
-      "🐺 Wolf",
-      "🐗 Boar",
-      "🐴 Horse",
-      "🦄 Unicorn",
-      "🐝 Bee",
-      "🐛 Bug",
-      "🦋 Butterfly",
-      "🐌 Snail",
-      "🐚 Shell",
-      "🐞 Lady Beetle",
-      "🐜 Ant",
-      "🕷 Spider",
-      "🦂 Scorpion",
-      "🦀 Crab",
-      "🦑 Squid",
-      "🐙 Octopus",
-      "🦐 Shrimp",
-      "🐠 Fish",
-      "🐟 Tropical Fish",
-      "🐡 Blowfish",
-      "🐬 Dolphin",
-      "🦈 Shark",
-      "🐳 Whale",
-      "🐋 Whale",
-      "🐊 Crocodile",
-      "🐆 Leopard",
-      "🐅 Tiger",
-      "🐃 Water Buffalo",
-      "🐂 Ox",
-      "🐄 Cow",
-      "🐪 Camel",
-      "🐫 Two-Hump Camel",
-      "🐘 Elephant",
-      "🦏 Rhinoceros",
-      "🦍 Gorilla",
-      "🐎 Horse",
-      "🐖 Pig",
-      "🐐 Goat",
-      "🐏 Ram",
-      "🐑 Sheep",
-      "🐕 Dog",
-      "🐩 Poodle",
-      "🐈 Cat",
-      "🐓 Rooster",
-      "🐇 Rabbit",
-      "🐁 Mouse",
-      "🐀 Rat",
-      "🐿 Chipmunk",
-      "🐾 Paw Prints",
-      "🐉 Dragon",
-      "🐲 Dragon Face",
+      { emoji: "🐶", name: "Dog" },
+      { emoji: "🐱", name: "Face Cat" },
+      { emoji: "🐭", name: "Mouse" },
+      { emoji: "🐹", name: "Hamster" },
+      { emoji: "🐰", name: "Rabbit" },
+      { emoji: "🦊", name: "Fox" },
+      { emoji: "🐻", name: "Bear" },
+      { emoji: "🐼", name: "Panda" },
+      { emoji: "🐨", name: "Koala" },
+      { emoji: "🐯", name: "Tiger" },
+      { emoji: "🦁", name: "Lion" },
+      { emoji: "🐮", name: "Cow" },
+      { emoji: "🐷", name: "Pig" },
+      { emoji: "🐸", name: "Frog" },
+      { emoji: "🐵", name: "Monkey" },
+      { emoji: "🐔", name: "Chicken" },
+      { emoji: "🐧", name: "Penguin" },
+      { emoji: "🐦", name: "Bird" },
+      { emoji: "🦀", name: "Crab" },
+      { emoji: "🦋", name: "Butterfly" },
     ],
   },
 };
@@ -214,6 +317,13 @@ export function AppWrapper({ children }: AppWrapperProps) {
     teamsFormatName: "placeholder",
   });
   const [playersName, setPlayersName] = useState<Array<string>>([]);
+  const [teamsFormatNameTemporary, setTeamsFormatNameTemporary] = useState<{
+    title: string;
+    list: {
+      emoji?: string;
+      name: string;
+    }[];
+  }>({ list: [], title: "temporary" });
 
   const globalState: GlobalState = {
     playerContext: {
@@ -227,6 +337,10 @@ export function AppWrapper({ children }: AppWrapperProps) {
     isGenerated: [isGenerated, setIsGenerated],
     teamsHash: [teamsHash, setTeamsHash],
     teamsFormatNameOptions: TEAMS_FORMAT_NAME_OPTIONS,
+    teamsFormatNameTemporary: {
+      teamsFormatName: teamsFormatNameTemporary,
+      setTeamsFormatName: setTeamsFormatNameTemporary,
+    },
   };
 
   return (

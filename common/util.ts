@@ -1,3 +1,6 @@
+import crypto from "crypto";
+import { TeamsObject } from "../context/teamContext";
+
 export function getRandomFromArray(arr: string[]) {
   const randomIndex = Math.floor(Math.random() * arr.length);
   const selected = arr[randomIndex];
@@ -5,40 +8,108 @@ export function getRandomFromArray(arr: string[]) {
   return selected;
 }
 
-export function randomTeamsName(arr: string[], max: number) {
-  const teams = shuffleArray(arr);
-  return teams.slice(0, max);
+export function randomTeamsName(
+  list: {
+    emoji?: string;
+    name: string;
+  }[],
+  max: number
+) {
+  return shuffleArray(list).slice(0, max);
 }
 
-export function shuffleArray(arr: string[]) {
-  return arr.sort(() => Math.random() - 0.5);
+export function shuffleArray(
+  list: {
+    emoji?: string;
+    name: string;
+  }[]
+) {
+  return list.sort(() => Math.random() - 0.5);
+}
+
+export function shufflePlayers(players: string[]) {
+  return players.sort(() => Math.random() - 0.5);
 }
 
 export function distributePlayers(
   players: string[],
-  teamNames: string[] | number[]
-) {
+  maxTeams: number
+): TeamsObject[] {
   players.sort(() => Math.random() - 0.5);
-  let teams = {} as { [key: string]: string[] };
-  let teamSize = Math.floor(players.length / teamNames.length);
-  let remainder = players.length % teamNames.length;
-  for (let i = 0; i < teamNames.length; i++) {
-    let team = players.slice(i * teamSize, (i + 1) * teamSize);
+  let teams = {} as {
+    [key: string]: {
+      name: string;
+      players: string[];
+    };
+  };
+  let teamSize = Math.floor(players.length / maxTeams);
+  let remainder = players.length % maxTeams;
+  for (let i = 0; i < maxTeams; i++) {
+    const team = players.slice(i * teamSize, (i + 1) * teamSize);
     if (remainder > 0) {
-      team.push(players[teamNames.length * teamSize + remainder - 1]);
+      team.push(players[maxTeams * teamSize + remainder - 1]);
       remainder--;
     }
-    teams[teamNames[i]] = team;
+    const uuid = crypto.randomBytes(20).toString("hex");
+    teams[uuid] = {
+      name: uuid,
+      players: team,
+    };
   }
-  return teams;
+
+  return Object.entries(teams).map(([key, value]) => {
+    return {
+      name: value.name,
+      players: value.players,
+      uuid: key,
+    };
+  });
 }
 
-export function sortTeams(teams: { [key: string]: string[] }) {
-  const sortedTeams = {} as { [key: string]: string[] };
-  Object.entries(teams)
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .forEach(([key, value]) => {
-      sortedTeams[key] = value;
+export function changeTeamsName(
+  teams: TeamsObject[],
+  teamNames: {
+    emoji?: string;
+    name: string;
+  }[],
+  teamsFormatName: string,
+  isFromShareLink?: boolean
+) {
+  if (isFromShareLink) {
+    return teams.map((team) => {
+      team.name = teams.find((t) => t.uuid === team.uuid)!.name;
+      team.emoji = teams.find((t) => t.uuid === team.uuid)?.emoji;
+      return team;
     });
-  return sortedTeams;
+  }
+  return teamsFormatName === "placeholder" || teamsFormatName === "default"
+    ? teams.map((team, i) => {
+        team.name = `Team ${i + 1}`;
+        return team;
+      })
+    : teams.map((team, i) => {
+        team.name = teamNames[i].name;
+        team.emoji = teamNames[i].emoji;
+        return team;
+      });
+}
+
+export function generateTeamsToShare(teams: TeamsObject[]) {
+  return new Map<
+    string,
+    {
+      name: string;
+      emoji?: string;
+      players: string[];
+    }
+  >(
+    teams.map((team) => [
+      team.uuid,
+      {
+        name: team.name,
+        emoji: team.emoji,
+        players: team.players,
+      },
+    ])
+  );
 }

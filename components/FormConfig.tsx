@@ -1,15 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { Config, useAppContext } from "../context/state";
-import {
-  distributePlayers,
-  randomTeamsName,
-  shuffleArray,
-  sortTeams,
-} from "../common/util";
+import { distributePlayers, shufflePlayers } from "../common/util";
 import { toast } from "react-toastify";
-import { TeamsContext } from "./Layout";
-import queryString from "query-string";
 import { useRouter } from "next/router";
+import { TeamsContext } from "../context/teamContext";
 
 const MIN_PLAYERS_PER_TEAM = 1;
 
@@ -87,27 +81,24 @@ const FormConfig = () => {
       });
     }
 
-    const listTeamsName = [
-      ...state.teamsFormatNameOptions[config.teamsFormatName].list,
-    ];
-    const listPlayersName = shuffleArray([...playersName]);
+    const listPlayersName = shufflePlayers([...playersName]);
 
-    const teamsName =
-      config.teamsFormatName === "placeholder" ||
-      config.teamsFormatName === "default"
-        ? Array.from({ length: config.numberOfTeams }, (_, i) => `Tim ${i + 1}`)
-        : randomTeamsName(listTeamsName, config.numberOfTeams);
-
-    const teamsAndPlayerHash = distributePlayers(listPlayersName, teamsName);
-    const sortedTeams = sortTeams(teamsAndPlayerHash);
-
-    setTeams(sortedTeams);
+    const teamsAndPlayerHash = distributePlayers(
+      listPlayersName,
+      config.numberOfTeams
+    );
+    setTeams(teamsAndPlayerHash);
     setIsGenerated(true);
   }
 
   async function handleShareTeams() {
-    const queryTeams = queryString.stringify(teams);
-    const url = new URL(`${origin}?${queryTeams}`);
+    const stringTeams = `${teams
+      .map((team) => JSON.stringify(team))
+      .join("&teams=")}`;
+    const stringFormatName = JSON.stringify(config.teamsFormatName);
+    const url = new URL(
+      `${origin}?teams=${stringTeams}&formatName=${stringFormatName}`
+    );
     await navigator.clipboard.writeText(url.href);
     toast.info("Link berhasil disalin!", {
       position: "top-right",
@@ -122,8 +113,14 @@ const FormConfig = () => {
   }
 
   function handleResetTeams() {
-    setTeams({});
+    setTeams([]);
     setIsGenerated(false);
+    setConfig({
+      numberOfTeams: 2,
+      teamsFormatName: "placeholder",
+      isFromShareLink: false,
+      isReset: true,
+    });
     router.replace("/", undefined, { shallow: true });
   }
 
