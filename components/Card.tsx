@@ -1,3 +1,8 @@
+import { EmojiClickData } from "emoji-picker-react";
+import dynamic from "next/dynamic";
+import { useCallback, useContext, useState } from "react";
+import { TeamsContext, TeamsObject } from "../context/teamContext";
+
 interface Card {
   players: string[] | string;
   teamName: string;
@@ -5,16 +10,45 @@ interface Card {
   uuid?: string;
 }
 
-const Card = ({ players, teamName, emoji }: Card) => {
+const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false })
+
+const Card = ({ players, teamName, emoji, uuid }: Card) => {
+  const { setTeams, teams, setIsUpdateTeamDetail } = useContext(TeamsContext);
+  const [showTeamNameEmoji, setShowTeamNameEmoji] = useState(false);
+  const handleOnEmojiClick = useCallback(({ emoji: newEmoji }: EmojiClickData) => {
+    const team: TeamsObject = {
+      name: teamName,
+      emoji,
+      uuid: uuid || '',
+      players: typeof players === "string" ? [players] : [...players],
+    }
+    const withoutOldTeam = teams.filter(t => t.uuid !== team.uuid)
+    const newTeam = {
+      ...team,
+      emoji: newEmoji
+    }
+    const result = [
+      ...withoutOldTeam,
+      newTeam,
+    ];
+    setIsUpdateTeamDetail(true)
+    setShowTeamNameEmoji(false)
+    setTeams(result)
+  }, [teams])
   return (
     <div className="flex flex-col group">
-      <div className="flex items-center justify-between rounded-t-lg border p-3 sm:px-6 sm:py-4 shadow-sm z-10 bg-slate-100 group-hover:bg-slate-200 transition-colors">
+      <div className="flex items-center justify-between rounded-t-lg border p-3 sm:px-6 sm:py-4 shadow-sm bg-slate-100 group-hover:bg-slate-200 transition-colors">
         <h5 className="text-xl font-bold leading-none text-gray-900 cursor-default flex overflow-x-clip">
           <p className="mr-1 inline-block bg-slate-400 rounded-md py-0.5 px-2 text-xs font-bold text-white">
             {`${players.length}`}
           </p>
           <p className="flex">
-            <span className="text-sm mr-1">{emoji && `${emoji}`}</span>
+            <span onClick={() => setShowTeamNameEmoji(true)} className="text-sm mr-1">{emoji && `${emoji}`}</span>
+            {showTeamNameEmoji && (
+              <div className="absolute">
+                <EmojiPicker width={"15em"} onEmojiClick={handleOnEmojiClick} />
+              </div>
+            )}
             {teamName}
           </p>
         </h5>

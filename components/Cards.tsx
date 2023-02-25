@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { changeTeamsName, randomTeamsName } from "../common/util";
 import { useAppContext } from "../context/state";
-import { TeamsObject } from "../context/teamContext";
+import { TeamsContext, TeamsObject } from "../context/teamContext";
 import Card from "./Card";
 
 interface Cards {
   teams: TeamsObject[];
 }
 
-const Cards = ({ teams }: Cards) => {
+const Cards = () => {
+  const { teams, isUpdateTeamDetail } = useContext(TeamsContext)
   const { teamsFormatName } = useAppContext().configContext.config;
   const teamsFormat = useAppContext().teamsFormatNameOptions;
   const { config } = useAppContext().configContext;
@@ -17,6 +18,9 @@ const Cards = ({ teams }: Cards) => {
     useAppContext().teamsFormatNameTemporary;
 
   useEffect(() => {
+    if (isUpdateTeamDetail) {
+      return;
+    }
     const listTeamsName = randomTeamsName(
       config.isFromShareLink
         ? teamsFormatNameTemporary.list
@@ -42,7 +46,7 @@ const Cards = ({ teams }: Cards) => {
 
   return (
     <div className="grid grid-flow-row grid-cols-2 gap-4 md:grid-cols-3">
-      {formattedTeams.map((team) => {
+      {(isUpdateTeamDetail ? teams : formattedTeams).map((team) => {
         if (
           config.teamsFormatName === "placeholder" ||
           config.teamsFormatName === "default"
