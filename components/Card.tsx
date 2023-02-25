@@ -16,24 +16,20 @@ const Card = ({ players, teamName, emoji, uuid }: Card) => {
   const { setTeams, teams, setIsUpdateTeamDetail } = useContext(TeamsContext);
   const [showTeamNameEmoji, setShowTeamNameEmoji] = useState(false);
   const handleOnEmojiClick = useCallback(({ emoji: newEmoji }: EmojiClickData) => {
-    const team: TeamsObject = {
+    const oldTeam: TeamsObject = {
       name: teamName,
       emoji,
       uuid: uuid || '',
       players: typeof players === "string" ? [players] : [...players],
     }
-    const withoutOldTeam = teams.filter(t => t.uuid !== team.uuid)
     const newTeam = {
-      ...team,
+      ...oldTeam,
       emoji: newEmoji
     }
-    const result = [
-      ...withoutOldTeam,
-      newTeam,
-    ];
+    const newAllTeams = teams.map(t => t.uuid !== oldTeam.uuid ? t : newTeam)
     setIsUpdateTeamDetail(true)
     setShowTeamNameEmoji(false)
-    setTeams(result)
+    setTeams(newAllTeams)
   }, [teams])
   return (
     <div className="flex flex-col group">
@@ -43,7 +39,7 @@ const Card = ({ players, teamName, emoji, uuid }: Card) => {
             {`${players.length}`}
           </p>
           <p className="flex">
-            <span onClick={() => setShowTeamNameEmoji(true)} className="text-sm mr-1">{emoji && `${emoji}`}</span>
+            <span onClick={() => setShowTeamNameEmoji(true)} className="text-sm mr-1 cursor-pointer">{emoji && `${emoji}`}</span>
             {showTeamNameEmoji && (
               <div className="absolute">
                 <EmojiPicker width={"15em"} onEmojiClick={handleOnEmojiClick} />
