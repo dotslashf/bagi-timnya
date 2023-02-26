@@ -1,6 +1,6 @@
 import { EmojiClickData } from "emoji-picker-react";
 import dynamic from "next/dynamic";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { TeamsContext, TeamsObject } from "../context/teamContext";
 
 interface Card {
@@ -15,6 +15,8 @@ const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false })
 const Card = ({ players, teamName, emoji, uuid }: Card) => {
   const { setTeams, teams, setIsUpdateTeamDetail } = useContext(TeamsContext);
   const [showTeamNameEmoji, setShowTeamNameEmoji] = useState(false);
+  const emojiPickerReff = useRef(null);
+
   const handleOnEmojiClick = useCallback(({ emoji: newEmoji }: EmojiClickData) => {
     const oldTeam: TeamsObject = {
       name: teamName,
@@ -32,17 +34,31 @@ const Card = ({ players, teamName, emoji, uuid }: Card) => {
     setTeams(newAllTeams)
   }, [teams])
 
-  const handleEscKey = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setShowTeamNameEmoji(false)
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setShowTeamNameEmoji(false)
+      }
+    }
+
+    function handleMouseDown(e: MouseEvent) {
+      if (
+        emojiPickerReff.current &&
+        !(emojiPickerReff.current as HTMLElement).contains(e.target as HTMLElement)
+      ) {
+        setShowTeamNameEmoji(false)
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown, false)
+    document.addEventListener("mousedown", handleMouseDown, false)
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, false)
+      document.removeEventListener("mousedown", handleMouseDown, false)
     }
   }, [])
 
-  useEffect(() => {
-    document.addEventListener("keydown", handleEscKey, false)
-
-    return () => document.removeEventListener("keydown", handleEscKey, false)
-  }, [])
   return (
     <div className="flex flex-col group">
       <div className="flex items-center justify-between rounded-t-lg border p-3 sm:px-6 sm:py-4 shadow-sm bg-slate-100 group-hover:bg-slate-200 transition-colors">
@@ -53,7 +69,7 @@ const Card = ({ players, teamName, emoji, uuid }: Card) => {
           <p className="flex">
             <span onClick={() => setShowTeamNameEmoji(true)} className="text-md mr-1 cursor-pointer">{emoji && `${emoji}`}</span>
             {showTeamNameEmoji && (
-              <div className="absolute">
+              <div className="absolute" ref={emojiPickerReff}>
                 <EmojiPicker width={"15em"} onEmojiClick={handleOnEmojiClick} />
               </div>
             )}
