@@ -1,7 +1,5 @@
-import { EmojiClickData } from "emoji-picker-react";
-import dynamic from "next/dynamic";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { TeamsContext, TeamsObject } from "../context/teamContext";
+import { useState } from "react";
+import TeamNameEmojiPicker from "./TeamNameEmojiPicker";
 
 interface Card {
   players: string[] | string;
@@ -10,54 +8,8 @@ interface Card {
   uuid?: string;
 }
 
-const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false })
-
 const Card = ({ players, teamName, emoji, uuid }: Card) => {
-  const { setTeams, teams, setIsUpdateTeamDetail } = useContext(TeamsContext);
-  const [showTeamNameEmoji, setShowTeamNameEmoji] = useState(false);
-  const emojiPickerReff = useRef(null);
-
-  const handleOnEmojiClick = useCallback(({ emoji: newEmoji }: EmojiClickData) => {
-    const oldTeam: TeamsObject = {
-      name: teamName,
-      emoji,
-      uuid: uuid || '',
-      players: typeof players === "string" ? [players] : [...players],
-    }
-    const newTeam = {
-      ...oldTeam,
-      emoji: newEmoji
-    }
-    const newAllTeams = teams.map(t => t.uuid !== oldTeam.uuid ? t : newTeam)
-    setIsUpdateTeamDetail(true)
-    setShowTeamNameEmoji(false)
-    setTeams(newAllTeams)
-  }, [teams])
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setShowTeamNameEmoji(false)
-      }
-    }
-
-    function handleMouseDown(e: MouseEvent) {
-      if (
-        emojiPickerReff.current &&
-        !(emojiPickerReff.current as HTMLElement).contains(e.target as HTMLElement)
-      ) {
-        setShowTeamNameEmoji(false)
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown, false)
-    document.addEventListener("mousedown", handleMouseDown, false)
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown, false)
-      document.removeEventListener("mousedown", handleMouseDown, false)
-    }
-  }, [])
+  const [showTeamNameEmojiPicker, setShowTeamNameEmojiPicker] = useState(false);
 
   return (
     <div className="flex flex-col group">
@@ -67,12 +19,12 @@ const Card = ({ players, teamName, emoji, uuid }: Card) => {
             {`${players.length}`}
           </p>
           <p className="flex">
-            <span onClick={() => setShowTeamNameEmoji(true)} className="text-md mr-1 cursor-pointer">{emoji && `${emoji}`}</span>
-            {showTeamNameEmoji && (
-              <div className="absolute" ref={emojiPickerReff}>
-                <EmojiPicker width={"15em"} onEmojiClick={handleOnEmojiClick} />
-              </div>
-            )}
+            <span onClick={() => setShowTeamNameEmojiPicker(true)} className="text-md mr-1 cursor-pointer">{emoji && `${emoji}`}</span>
+            <TeamNameEmojiPicker
+              show={showTeamNameEmojiPicker}
+              onSetShowEmojiPicker={setShowTeamNameEmojiPicker}
+              uuid={uuid || ''}
+            />
             {teamName}
           </p>
         </h5>
