@@ -39,7 +39,7 @@ const Card = ({ players, teamName, emoji, uuid }: Card) => {
             {`${players.length}`}
           </p>
           <p className="flex">
-            <span onClick={() => setShowTeamNameEmoji(true)} className="text-sm mr-1 cursor-pointer">{emoji && `${emoji}`}</span>
+            <span onClick={() => setShowTeamNameEmoji(true)} className="text-md mr-1 cursor-pointer">{emoji && `${emoji}`}</span>
             {showTeamNameEmoji && (
               <div className="absolute">
                 <EmojiPicker width={"15em"} onEmojiClick={handleOnEmojiClick} />
