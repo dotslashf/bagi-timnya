@@ -1,6 +1,6 @@
 import { EmojiClickData } from "emoji-picker-react";
 import dynamic from "next/dynamic";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { TeamsContext, TeamsObject } from "../context/teamContext";
 
 interface Card {
@@ -31,6 +31,18 @@ const Card = ({ players, teamName, emoji, uuid }: Card) => {
     setShowTeamNameEmoji(false)
     setTeams(newAllTeams)
   }, [teams])
+
+  const handleEscKey = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setShowTeamNameEmoji(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEscKey, false)
+
+    return () => document.removeEventListener("keydown", handleEscKey, false)
+  }, [])
   return (
     <div className="flex flex-col group">
       <div className="flex items-center justify-between rounded-t-lg border p-3 sm:px-6 sm:py-4 shadow-sm bg-slate-100 group-hover:bg-slate-200 transition-colors">
