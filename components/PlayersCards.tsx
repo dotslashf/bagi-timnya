@@ -4,12 +4,12 @@ import { useAppContext } from "../context/state";
 import { TeamsContext, TeamsObject } from "../context/teamContext";
 import Card from "./Card";
 
-interface Cards {
+interface PlayersCards {
   teams: TeamsObject[];
 }
 
-const Cards = () => {
-  const { teams, isUpdateTeamDetail } = useContext(TeamsContext)
+const PlayersCards = () => {
+  const { teams, isUpdateTeamDetail } = useContext(TeamsContext);
   const { teamsFormatName } = useAppContext().configContext.config;
   const teamsFormat = useAppContext().teamsFormatNameOptions;
   const { config } = useAppContext().configContext;
@@ -42,6 +42,7 @@ const Cards = () => {
     teamsFormat,
     config.isFromShareLink,
     teamsFormatNameTemporary,
+    isUpdateTeamDetail,
   ]);
 
   return (
@@ -67,4 +68,4 @@ const Cards = () => {
   );
 };
 
-export default Cards;
+export default PlayersCards;

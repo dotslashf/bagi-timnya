@@ -1,13 +1,7 @@
-import { createContext } from "react";
+import React, { createContext } from "react";
+import { TeamsObject } from "../@types/TeamsObject";
 
-export interface TeamsObject {
-  uuid: string;
-  name: string;
-  players: string[];
-  // TODO: add emoji and score
-  emoji?: string;
-  score?: number;
-}
+export type { TeamsObject };
 
 interface TeamsContextType {
   teams: TeamsObject[];
@@ -21,5 +15,5 @@ export const TeamsContext = createContext<TeamsContextType>({
     return teams;
   },
   isUpdateTeamDetail: false,
-  setIsUpdateTeamDetail: () => { }
+  setIsUpdateTeamDetail: () => {},
 });

@@ -1,20 +1,21 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/state";
-import Cards from "./Cards";
+import PlayersCards from "./PlayersCards";
 import Drawers from "./Drawers";
-import { TeamsContext, TeamsObject } from "../context/teamContext";
+import { TeamsContext } from "../context/teamContext";
+import { TeamsObject } from "../@types/TeamsObject";
 
 export const Layout = () => {
   const state = useAppContext();
   const { config, setConfig } = state.configContext;
   const [isGenerated, setIsGenerated] = state.isGenerated;
   const [teams, setTeams] = useState<TeamsObject[]>([]);
-  const [isUpdateTeamDetail, setIsUpdateTeamDetail] = useState<boolean>(false)
+  const [isUpdateTeamDetail, setIsUpdateTeamDetail] = useState<boolean>(false);
   const router = useRouter();
   const teamsFormat = useAppContext().teamsFormatNameOptions;
   const { setTeamsFormatName } = useAppContext().teamsFormatNameTemporary;
-
+  const isFromLink = router.query && Object.keys(router.query).length > 0;
   useEffect(() => {
     if (config.isReset) {
       setConfig({
@@ -27,7 +28,7 @@ export const Layout = () => {
       setIsGenerated(false);
       router.push("/");
     }
-    if (router.query && Object.keys(router.query).length > 0) {
+    if (isFromLink) {
       const { teams, formatName } = router.query as {
         teams: string[];
         formatName: string;
@@ -74,7 +75,9 @@ export const Layout = () => {
   ]);
 
   return (
-    <TeamsContext.Provider value={{ teams, setTeams, isUpdateTeamDetail, setIsUpdateTeamDetail }}>
+    <TeamsContext.Provider
+      value={{ teams, setTeams, isUpdateTeamDetail, setIsUpdateTeamDetail }}
+    >
       <main className="grid grid-cols-3 w-full bg-white overflow-y-scroll h-auto md:h-screen">
         <aside className="py-4 flex flex-col w-full border-b border-r-0 md:border-r md:border-b-0 border-gray-400 border-opacity-30 col-span-3 md:col-span-1">
           <h1 className="text-3xl text-center tracking-wide font-bold">
@@ -88,7 +91,7 @@ export const Layout = () => {
               Daftar tim akan muncul disini
             </p>
           ) : (
-            <Cards />
+            <PlayersCards />
           )}
         </section>
       </main>
