@@ -12,7 +12,7 @@ const FormConfig = () => {
   const { config, setConfig } = state.configContext;
   const [_, setIsGenerated] = state.isGenerated;
   const { playersName } = state.playerContext;
-  const { teams, setTeams } = useContext(TeamsContext);
+  const { teams, setTeams, setIsUpdateTeamDetail } = useContext(TeamsContext);
   const [localConfig, setLocalConfig] = useState<Config>(config);
   const origin =
     typeof window !== "undefined" && window.location.origin
@@ -87,6 +87,7 @@ const FormConfig = () => {
       listPlayersName,
       config.numberOfTeams
     );
+    setIsUpdateTeamDetail(false)
     setTeams(teamsAndPlayerHash);
     setIsGenerated(true);
   }
