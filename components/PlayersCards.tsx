@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { changeTeamsName, randomTeamsName } from "../common/util";
 import { useAppContext } from "../context/state";
-import { TeamsObject } from "../context/teamContext";
+import { TeamsObject } from "../@types/TeamsObject";
 import Card from "./Card";
 
 interface Cards {
   teams: TeamsObject[];
 }
 
-const Cards = ({ teams }: Cards) => {
+const PlayersCards = ({ teams }: Cards) => {
   const { teamsFormatName } = useAppContext().configContext.config;
   const teamsFormat = useAppContext().teamsFormatNameOptions;
   const { config } = useAppContext().configContext;
@@ -63,4 +63,4 @@ const Cards = ({ teams }: Cards) => {
   );
 };
 
-export default Cards;
+export default PlayersCards;
