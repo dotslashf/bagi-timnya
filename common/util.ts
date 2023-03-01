@@ -13,7 +13,7 @@ export function randomTeamsName(
     emoji?: string;
     name: string;
   }[],
-  max: number
+  max: number,
 ) {
   return shuffleArray(list).slice(0, max);
 }
@@ -22,7 +22,7 @@ export function shuffleArray(
   list: {
     emoji?: string;
     name: string;
-  }[]
+  }[],
 ) {
   return list.sort(() => Math.random() - 0.5);
 }
@@ -33,7 +33,7 @@ export function shufflePlayers(players: string[]) {
 
 export function distributePlayers(
   players: string[],
-  maxTeams: number
+  maxTeams: number,
 ): TeamsObject[] {
   players.sort(() => Math.random() - 0.5);
   let teams = {} as {
@@ -73,7 +73,7 @@ export function changeTeamsName(
     name: string;
   }[],
   teamsFormatName: string,
-  isFromShareLink?: boolean
+  isFromShareLink?: boolean,
 ) {
   if (isFromShareLink) {
     return teams.map((team) => {
@@ -110,6 +110,6 @@ export function generateTeamsToShare(teams: TeamsObject[]) {
         emoji: team.emoji,
         players: team.players,
       },
-    ])
+    ]),
   );
 }

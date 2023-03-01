@@ -27,13 +27,13 @@ const PlayersCards = () => {
         : teamsFormat[teamsFormatName].list,
       config.isFromShareLink
         ? teamsFormatNameTemporary.list.length
-        : teamsFormat[teamsFormatName].list.length
+        : teamsFormat[teamsFormatName].list.length,
     );
     const formattedTeamsName = changeTeamsName(
       teams,
       listTeamsName,
       config.isFromShareLink ? "temporary" : teamsFormatName,
-      config.isFromShareLink
+      config.isFromShareLink,
     );
     setFormattedTeams(formattedTeamsName);
   }, [

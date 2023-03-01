@@ -1,6 +1,12 @@
-import React, {createContext, Dispatch, useContext, useEffect, useState} from "react";
-import {Config} from "../@types/Config";
-import {TeamUtils} from "../utils/TeamUtils";
+import React, {
+  createContext,
+  Dispatch,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { Config } from "../@types/Config";
+import { TeamUtils } from "../utils/TeamUtils";
 
 interface GlobalState {
   playerContext: {
@@ -13,8 +19,10 @@ interface GlobalState {
   };
   isGenerated: [boolean, Dispatch<React.SetStateAction<boolean>>];
   teamsHash: [
-        { [key: string]: string[] } | undefined,
-    React.Dispatch<React.SetStateAction<{ [key: string]: string[] } | undefined>>
+    { [key: string]: string[] } | undefined,
+    React.Dispatch<
+      React.SetStateAction<{ [key: string]: string[] } | undefined>
+    >,
   ];
   teamsFormatNameOptions: {
     [key: string]: {
@@ -33,13 +41,15 @@ interface GlobalState {
         name: string;
       }[];
     };
-    setTeamsFormatName: React.Dispatch<React.SetStateAction<{
-      title: string;
-      list: {
-        emoji?: string;
-        name: string;
-      }[];
-    }>>;
+    setTeamsFormatName: React.Dispatch<
+      React.SetStateAction<{
+        title: string;
+        list: {
+          emoji?: string;
+          name: string;
+        }[];
+      }>
+    >;
   };
 }
 
@@ -56,22 +66,22 @@ const TEAMS_FORMAT_NAME_OPTIONS = {
   placeholder: {
     title: "Pilih format",
     list: Array(20)
-        .fill("")
-        .map((_, i) => {
-          return {
-            name: `${i}`,
-          };
-        }),
+      .fill("")
+      .map((_, i) => {
+        return {
+          name: `${i}`,
+        };
+      }),
   },
   default: {
     title: "Default",
     list: Array(20)
-        .fill("")
-        .map((_, i) => {
-          return {
-            name: `${i}`,
-          };
-        }),
+      .fill("")
+      .map((_, i) => {
+        return {
+          name: `${i}`,
+        };
+      }),
   },
   fruitsAndFoods: {
     title: "Buah/Makan",
@@ -262,26 +272,26 @@ const TEAMS_FORMAT_NAME_OPTIONS = {
   animals: {
     title: "Hewan",
     list: [
-      {emoji: "🐶", name: "Dog"},
-      {emoji: "🐱", name: "Face Cat"},
-      {emoji: "🐭", name: "Mouse"},
-      {emoji: "🐹", name: "Hamster"},
-      {emoji: "🐰", name: "Rabbit"},
-      {emoji: "🦊", name: "Fox"},
-      {emoji: "🐻", name: "Bear"},
-      {emoji: "🐼", name: "Panda"},
-      {emoji: "🐨", name: "Koala"},
-      {emoji: "🐯", name: "Tiger"},
-      {emoji: "🦁", name: "Lion"},
-      {emoji: "🐮", name: "Cow"},
-      {emoji: "🐷", name: "Pig"},
-      {emoji: "🐸", name: "Frog"},
-      {emoji: "🐵", name: "Monkey"},
-      {emoji: "🐔", name: "Chicken"},
-      {emoji: "🐧", name: "Penguin"},
-      {emoji: "🐦", name: "Bird"},
-      {emoji: "🦀", name: "Crab"},
-      {emoji: "🦋", name: "Butterfly"},
+      { emoji: "🐶", name: "Dog" },
+      { emoji: "🐱", name: "Face Cat" },
+      { emoji: "🐭", name: "Mouse" },
+      { emoji: "🐹", name: "Hamster" },
+      { emoji: "🐰", name: "Rabbit" },
+      { emoji: "🦊", name: "Fox" },
+      { emoji: "🐻", name: "Bear" },
+      { emoji: "🐼", name: "Panda" },
+      { emoji: "🐨", name: "Koala" },
+      { emoji: "🐯", name: "Tiger" },
+      { emoji: "🦁", name: "Lion" },
+      { emoji: "🐮", name: "Cow" },
+      { emoji: "🐷", name: "Pig" },
+      { emoji: "🐸", name: "Frog" },
+      { emoji: "🐵", name: "Monkey" },
+      { emoji: "🐔", name: "Chicken" },
+      { emoji: "🐧", name: "Penguin" },
+      { emoji: "🐦", name: "Bird" },
+      { emoji: "🦀", name: "Crab" },
+      { emoji: "🦋", name: "Butterfly" },
     ],
   },
 };
@@ -294,7 +304,7 @@ const PlayersContext = createContext<PlayersContext>({
   },
 } as PlayersContext);
 
-export function AppWrapper({children}: AppWrapperProps) {
+export function AppWrapper({ children }: AppWrapperProps) {
   const teamUtils: TeamUtils = new TeamUtils();
   const [isGenerated, setIsGenerated] = useState(false);
   const [teamsHash, setTeamsHash] = useState<{ [key: string]: string[] }>();
@@ -309,16 +319,18 @@ export function AppWrapper({children}: AppWrapperProps) {
       emoji?: string;
       name: string;
     }[];
-  }>({list: [], title: "temporary"});
+  }>({ list: [], title: "temporary" });
 
   useEffect(() => {
-    setConfig({...config, isFromLocalStorage: true})
+    setConfig({ ...config, isFromLocalStorage: true });
     const playersNameFromLocalStorage = teamUtils.read();
     if (playersNameFromLocalStorage) {
-      const listName: string[] = playersNameFromLocalStorage.map(item => item.players).flat()
-      setPlayersName(listName)
+      const listName: string[] = playersNameFromLocalStorage
+        .map((item) => item.players)
+        .flat();
+      setPlayersName(listName);
     }
-  }, [])
+  }, []);
 
   const globalState: GlobalState = {
     playerContext: {
@@ -339,7 +351,7 @@ export function AppWrapper({children}: AppWrapperProps) {
   };
 
   return (
-      <AppContext.Provider value={globalState}>{children}</AppContext.Provider>
+    <AppContext.Provider value={globalState}>{children}</AppContext.Provider>
   );
 }
 
