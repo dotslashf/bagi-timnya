@@ -22,13 +22,13 @@ const TeamNameEmojiPicker = ({
   const handleOnEmojiClick = useCallback(
     ({ emoji: newEmoji }: EmojiClickData) => {
       const newAllTeams = teams.map((t) =>
-        t.uuid !== uuid ? t : { ...t, emoji: newEmoji }
+        t.uuid !== uuid ? t : { ...t, emoji: newEmoji },
       );
       setIsUpdateTeamDetail(true);
       onSetShowEmojiPicker(false);
       setTeams(newAllTeams);
     },
-    [onSetShowEmojiPicker, setIsUpdateTeamDetail, setTeams, teams, uuid]
+    [onSetShowEmojiPicker, setIsUpdateTeamDetail, setTeams, teams, uuid],
   );
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const TeamNameEmojiPicker = ({
       if (
         emojiPickerReff.current &&
         !(emojiPickerReff.current as HTMLElement).contains(
-          e.target as HTMLElement
+          e.target as HTMLElement,
         )
       ) {
         onSetShowEmojiPicker(false);
