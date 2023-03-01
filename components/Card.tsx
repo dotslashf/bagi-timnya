@@ -19,7 +19,7 @@ const Card = ({ players, teamName, emoji }: Card) => {
           </p>
         </h5>
       </div>
-      <div className="w-full max-w-xs bg-white border border-t-0 rounded-b-lg shadow-md p-3 sm:px-6 sm:py-4">
+      <div className="w-full bg-white border border-t-0 rounded-b-lg shadow-md p-3 sm:px-6 sm:py-4">
         <ul role="list" className="divide-y divide-gray-200">
           {typeof players === "string" ? (
             <li className="py-2">
