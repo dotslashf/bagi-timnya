@@ -10,6 +10,7 @@ export const Layout = () => {
   const { config, setConfig } = state.configContext;
   const [isGenerated, setIsGenerated] = state.isGenerated;
   const [teams, setTeams] = useState<TeamsObject[]>([]);
+  const [isUpdateTeamDetail, setIsUpdateTeamDetail] = useState<boolean>(false)
   const router = useRouter();
   const teamsFormat = useAppContext().teamsFormatNameOptions;
   const { setTeamsFormatName } = useAppContext().teamsFormatNameTemporary;
@@ -73,7 +74,7 @@ export const Layout = () => {
   ]);
 
   return (
-    <TeamsContext.Provider value={{ teams, setTeams }}>
+    <TeamsContext.Provider value={{ teams, setTeams, isUpdateTeamDetail, setIsUpdateTeamDetail }}>
       <main className="grid grid-cols-3 w-full bg-white overflow-y-scroll h-auto md:h-screen">
         <aside className="py-4 flex flex-col w-full border-b border-r-0 md:border-r md:border-b-0 border-gray-400 border-opacity-30 col-span-3 md:col-span-1">
           <h1 className="text-3xl text-center tracking-wide font-bold">
@@ -87,7 +88,7 @@ export const Layout = () => {
               Daftar tim akan muncul disini
             </p>
           ) : (
-            <Cards teams={teams} />
+            <Cards />
           )}
         </section>
       </main>

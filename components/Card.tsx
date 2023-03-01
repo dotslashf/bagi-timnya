@@ -1,3 +1,6 @@
+import { useState } from "react";
+import TeamNameEmojiPicker from "./TeamNameEmojiPicker";
+
 interface Card {
   players: string[] | string;
   teamName: string;
@@ -5,16 +8,23 @@ interface Card {
   uuid?: string;
 }
 
-const Card = ({ players, teamName, emoji }: Card) => {
+const Card = ({ players, teamName, emoji, uuid }: Card) => {
+  const [showTeamNameEmojiPicker, setShowTeamNameEmojiPicker] = useState(false);
+
   return (
     <div className="flex flex-col group">
-      <div className="flex items-center justify-between rounded-t-lg border p-3 sm:px-6 sm:py-4 shadow-sm z-10 bg-slate-100 group-hover:bg-slate-200 transition-colors">
+      <div className="flex items-center justify-between rounded-t-lg border p-3 sm:px-6 sm:py-4 shadow-sm bg-slate-100 group-hover:bg-slate-200 transition-colors">
         <h5 className="text-xl font-bold leading-none text-gray-900 cursor-default flex overflow-x-clip">
           <p className="mr-1 inline-block bg-slate-400 rounded-md py-0.5 px-2 text-xs font-bold text-white">
             {`${players.length}`}
           </p>
           <p className="flex">
-            <span className="text-sm mr-1">{emoji && `${emoji}`}</span>
+            <span onClick={() => setShowTeamNameEmojiPicker(true)} className="text-md mr-1 cursor-pointer">{emoji && `${emoji}`}</span>
+            <TeamNameEmojiPicker
+              show={showTeamNameEmojiPicker}
+              onSetShowEmojiPicker={setShowTeamNameEmojiPicker}
+              uuid={uuid || ''}
+            />
             {teamName}
           </p>
         </h5>
