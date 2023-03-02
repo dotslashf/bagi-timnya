@@ -16,7 +16,7 @@ export const useTeams = () => {
   const { config, setConfig } = configContext;
   const [, setIsGenerated] = isGenerated;
   const { playersName } = playerContext;
-  const { teams, setTeams } = useContext(TeamsContext);
+  const { teams, setTeams, setIsUpdateTeamDetail } = useContext(TeamsContext);
   const [localConfig, setLocalConfig] = useState<Config>(config);
   const origin =
     typeof window !== "undefined" && window.location.origin
@@ -86,6 +86,7 @@ export const useTeams = () => {
       listPlayersName,
       config.numberOfTeams,
     );
+    setIsUpdateTeamDetail(false);
     setTeams(teamsAndPlayerHash);
     teamUtils.push(teamsAndPlayerHash);
     setIsGenerated(true);
